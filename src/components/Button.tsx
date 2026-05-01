@@ -9,16 +9,29 @@ interface ButtonProps {
   children?: React.ReactNode;
   ariaLabel?: string;
   variant?: "primary" | "secondary" | "ghost" | "danger";
+  style?: React.CSSProperties;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ btnName, classStyles = "", handleClick, buttonType = "button", children, ariaLabel, variant }, ref) => {
+  (
+    {
+      btnName,
+      classStyles = "",
+      handleClick,
+      buttonType = "button",
+      children,
+      ariaLabel,
+      variant,
+      style,
+    },
+    ref
+  ) => {
     const handleClick_internal = (e: React.MouseEvent<HTMLButtonElement>) => {
       handleClick(e);
     };
 
     const variantStyles = variant ? STYLES.button[variant] : "";
-    const baseStyles = STYLES.button.base;
+  const baseStyles = STYLES.button.base;
 
     return (
       <button
@@ -27,6 +40,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         onClick={handleClick_internal}
         className={`${baseStyles} ${variantStyles} ${classStyles}`}
         aria-label={ariaLabel}
+        style={style}
       >
         {children || btnName}
       </button>

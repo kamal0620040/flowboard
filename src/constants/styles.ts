@@ -27,3 +27,25 @@ export const STYLES = {
     buttonGroup: "flex items-center gap-3",
   },
 };
+
+// Color palettes for board backgrounds
+export const COLOR_PALETTE = {
+  gradients: [
+    "linear-gradient(135deg, #1e3a8a 0%, #0ea5e9 100%)", // Blue gradient
+    "linear-gradient(135deg, #06b6d4 0%, #10b981 100%)", // Cyan to Green
+    "linear-gradient(135deg, #a855f7 0%, #ec4899 100%)", // Purple to Pink
+    "linear-gradient(135deg, #f97316 0%, #facc15 100%)", // Orange to Yellow
+    "linear-gradient(135deg, #dc2626 0%, #8b5cf6 100%)", // Red to Purple
+    "linear-gradient(135deg, #1f2937 0%, #6b4226 100%)", // Dark Gray to Brown
+  ],
+  solidColors: [
+    "#0369a1", // Blue
+    "#b45309", // Gold
+    "#16a34a", // Green
+    "#dc2626", // Red
+    "#a855f7", // Purple
+    "#ec4899", // Pink
+    "#10b981", // Emerald
+    "#6b7280", // Gray
+  ],
+};
