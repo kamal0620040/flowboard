@@ -48,6 +48,8 @@ interface TrelloStore {
   setActiveBoard: (id: string) => void;
   deleteBoard: (id: string) => void;
   addBoard: (title: string) => string;
+  updateBoardTitle: (id: string, title: string) => void;
+  updateBoardColor: (id: string, color: string) => void;
   setSearchQuery: (query: string) => void;
 }
 
@@ -160,6 +162,13 @@ export const useTrelloStore = create<TrelloStore>()(
 
       // Global Actions
       setActiveBoard: (id) => set({ activeBoardId: id }),
+      updateBoardTitle: (id: string, title: string) => {
+        set((state) => ({
+          boards: state.boards.map((board) =>
+            board.id === id ? { ...board, title } : board
+          ),
+        }));
+      },
       addBoard: (title: string) => {
         const id = `board-${Date.now()}`;
         const colors = ["#0747a6", "#519839", "#7c3aed", "#0ea5e9", "#db2777"];
@@ -191,6 +200,13 @@ export const useTrelloStore = create<TrelloStore>()(
         });
       },
       setSearchQuery: (searchQuery) => set({ searchQuery }),
+      updateBoardColor: (id: string, color: string) => {
+        set((state) => ({
+          boards: state.boards.map((b) => 
+            b.id === id ? { ...b, backgroundColor: color } : b
+          ),
+        }));
+      },
     }),
     {
       name: 'trello-state-v1',

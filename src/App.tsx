@@ -1,5 +1,5 @@
 import { Navigate, Outlet, useParams } from "react-router";
-import { Navbar, Sidebar } from "./components";
+import { Navbar, Sidebar, BoardHeader } from "./components";
 import { useTrelloStore } from "./store/flowBoardStore";
 
 function App() {
@@ -28,7 +28,7 @@ export const DefaultBoardRedirect = () => {
   if (!targetBoardId) {
     return <div className="p-6 text-slate-400">No boards available.</div>;
   }
-  
+
   return <Navigate to={`/boards/${targetBoardId}`} replace />;
 };
 
@@ -38,10 +38,18 @@ export const BoardPage = () => {
 
   return (
     <section
-      className={`h-full overflow-y-auto p-6`}
-      style={{ backgroundColor: board?.backgroundColor ?? 'transparent' }}
+      className="h-full overflow-y-auto"
+      style={{ background: board?.backgroundColor ?? "transparent" }}
     >
-      <h1 className="text-2xl font-bold">Board ID: {boardId}</h1>
+      {board ? (
+        <BoardHeader
+          boardId={board.id}
+          title={board.title}
+          background={board.backgroundColor}
+        />
+      ) : (
+        <h1 className="text-2xl font-bold text-white">Board not found</h1>
+      )}
     </section>
   );
 };
