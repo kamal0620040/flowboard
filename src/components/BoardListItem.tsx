@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { NavLink, useNavigate } from "react-router";
 import { MdDeleteForever } from "react-icons/md";
 import Button from "./Button";
-import { useTrelloStore } from "../store/flowBoardStore";
+import { useFlowBoardStore } from "../store/flowBoardStore";
 import { STYLES } from "../constants/styles";
 
 interface BoardListItemProps {
@@ -24,8 +24,8 @@ const BoardListItem = ({
 }: BoardListItemProps) => {
   const navigate = useNavigate();
   const linkRef = useRef<HTMLAnchorElement>(null);
-  const setActiveBoard = useTrelloStore((state) => state.setActiveBoard);
-  const deleteBoard = useTrelloStore((state) => state.deleteBoard);
+  const setActiveBoard = useFlowBoardStore((state) => state.setActiveBoard);
+  const deleteBoard = useFlowBoardStore((state) => state.deleteBoard);
 
   useEffect(() => {
     if (shouldFocus && linkRef.current) {
@@ -53,13 +53,12 @@ const BoardListItem = ({
         onBoardSelect(id);
       }}
       className={({ isActive }) =>
-        `group relative flex items-center justify-between overflow-visible ${STYLES.link.base} ${STYLES.link.hover} ${
-          isActive ? STYLES.link.active : ""
+        `group relative flex items-center justify-between overflow-visible ${STYLES.link.base} ${STYLES.link.hover} ${isActive ? STYLES.link.active : ""
         }`
       }
       tabIndex={isCollapsed ? -1 : 0}
     >
-      <span className="truncate">{title}</span>
+      <span className="truncate" title={title}>{title}</span>
 
       <Button
         handleClick={handleDelete}

@@ -11,6 +11,7 @@ interface AddItemFormProps {
   triggerButtonIcon?: React.ReactNode;
   triggerButtonText?: string;
   focusTriggerOnClose?: boolean;
+  triggerButtonRef?: React.RefObject<HTMLButtonElement | null>;
 }
 
 const AddItemForm = ({
@@ -20,12 +21,21 @@ const AddItemForm = ({
   triggerButtonIcon = <FiPlus />,
   triggerButtonText = "New item",
   focusTriggerOnClose = true,
+  triggerButtonRef: externalTriggerButtonRef,
 }: AddItemFormProps) => {
   const [isAdding, setIsAdding] = useState(false);
   const [value, setValue] = useState("");
-  const triggerButtonRef = useRef<HTMLButtonElement>(null);
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  // Ref to the trigger button to restore focus when the form closes.
+  // Uses the provided external ref, or falls back to an internal one.
+  const internalTriggerButtonRef = useRef<HTMLButtonElement>(null);
+  const triggerButtonRef = externalTriggerButtonRef ?? internalTriggerButtonRef;
+
+  // Tracks previous `isAdding` state to detect when the form transitions from open to closed.
+  // This prevents stealing focus on the initial render or unrelated re-renders.
+  const prevIsAddingRef = useRef(isAdding);
+
+  const handleFormSubmit = (e: React.SubmitEvent) => {
     e.preventDefault();
     if (value.trim()) {
       onSubmit(value);
@@ -35,10 +45,12 @@ const AddItemForm = ({
   };
 
   useEffect(() => {
-    if (!isAdding && focusTriggerOnClose && triggerButtonRef.current) {
+    if (prevIsAddingRef.current && !isAdding && focusTriggerOnClose && triggerButtonRef.current) {
       triggerButtonRef.current.focus();
     }
-  }, [focusTriggerOnClose, isAdding]);
+
+    prevIsAddingRef.current = isAdding;
+  }, [focusTriggerOnClose, isAdding, triggerButtonRef]);
 
   return (
     <>
@@ -66,7 +78,6 @@ const AddItemForm = ({
             <Button
               buttonType="submit"
               btnName={submitText}
-              handleClick={() => undefined}
               variant="primary"
             />
 

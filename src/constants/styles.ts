@@ -16,9 +16,9 @@ export const STYLES = {
 
   // NavLink/Link styles
   link: {
-    base: "rounded px-2 py-1 transition-colors focus:outline-none focus:ring-2 focus:ring-sky-500",
+    base: "rounded px-3 py-0.5 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-sky-500",
     hover: "hover:bg-white/10",
-    active: "bg-sky-500/20 text-sky-400",
+    active: "bg-sky-500/20 text-sky-400 font-semibold",
   },
 
   // Form group styles
@@ -39,13 +39,15 @@ export const COLOR_PALETTE = {
     "linear-gradient(135deg, #1f2937 0%, #6b4226 100%)", // Dark Gray to Brown
   ],
   solidColors: [
-    "#0369a1", // Blue
-    "#b45309", // Gold
-    "#16a34a", // Green
-    "#dc2626", // Red
-    "#a855f7", // Purple
-    "#ec4899", // Pink
-    "#10b981", // Emerald
-    "#6b7280", // Gray
+    "#1a583e",
+    "#664c01",
+    "#7e3d00",
+    "#8b251d",
+    "#663284",
+    "#114696",
+    "#1a5569",
+    "#3d5619",
+    "#76315c",
+    "#4e5457",
   ],
 };

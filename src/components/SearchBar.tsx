@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Button from "./Button";
 import { FiSearch, FiX } from "react-icons/fi";
-import { useTrelloStore } from "../store/flowBoardStore";
+import { useFlowBoardStore } from "../store/flowBoardStore";
 import useDebounce from "../hooks/useDebounce";
 
 const SearchBar = () => {
-  const searchQuery = useTrelloStore((s) => s.searchQuery);
-  const setSearchQuery = useTrelloStore((s) => s.setSearchQuery);
+  const searchQuery = useFlowBoardStore((s) => s.searchQuery);
+  const setSearchQuery = useFlowBoardStore((s) => s.setSearchQuery);
 
   const [localQuery, setLocalQuery] = useState(searchQuery ?? "");
   const debouncedQuery = useDebounce(localQuery, 250);
