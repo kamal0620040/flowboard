@@ -1,13 +1,14 @@
 import { FaTrello } from "react-icons/fa";
 import { RiMenuFill } from "react-icons/ri";
-import { useTrelloStore } from "../store/flowBoardStore";
+import { useFlowBoardStore } from "../store/flowBoardStore";
 import Popover from "./Popover";
 import Button from "./Button";
 import { COLOR_PALETTE } from "../constants/styles";
+import SearchBar from "./SearchBar";
 
 const Navbar = () => {
-  const activeBoardId = useTrelloStore((state) => state.activeBoardId);
-  const updateBoardColor = useTrelloStore((state) => state.updateBoardColor);
+  const activeBoardId = useFlowBoardStore((state) => state.activeBoardId);
+  const updateBoardColor = useFlowBoardStore((state) => state.updateBoardColor);
 
   const handleColorSelect = (color: string) => {
     if (activeBoardId) {
@@ -19,7 +20,6 @@ const Navbar = () => {
     <Button
       variant="ghost"
       ariaLabel="Menu"
-      handleClick={() => {}}
     >
       <RiMenuFill size={20} />
     </Button>
@@ -65,9 +65,15 @@ const Navbar = () => {
 
   return (
     <nav className="flex justify-between w-full fixed z-10 p-4 flex-row border-b text-white bg-[#1F1F21] border-[#E3E1E3]">
-      <div className="flex flex-1 flex-row gap-2 font-extrabold justify-start">
-        <FaTrello size={24} />
-        Flow Board
+      <div className="flex items-center">
+        <div className="flex items-center gap-2 font-extrabold justify-start">
+          <FaTrello size={24} />
+          Flow Board
+        </div>
+      </div>
+
+      <div className="flex-1 flex justify-center">
+        <SearchBar />
       </div>
       <Popover trigger={triggerButton} width="w-72">
         {colorPickerContent}
