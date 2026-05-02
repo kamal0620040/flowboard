@@ -71,6 +71,7 @@ export const CardOptionsMenu = ({ cardId, boardId, currentColumnId, onDeleteCard
       position="right"
     >
       <div className="space-y-3">
+        <div className="text-sm font-bold text-slate-100">Card Options</div>
         <Button
           variant="danger"
           handleClick={onDeleteCard}

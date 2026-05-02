@@ -39,7 +39,7 @@ const Sidebar = () => {
 
   return (
     <aside
-      className={`sticky top-14 shrink-0 border-r border-white/10 bg-[#1d1f24] text-white overflow-visible ${isCollapsed ? "w-8" : "w-64"
+      className={`sticky top-14 shrink-0 z-20 border-r border-white/10 bg-[#1d1f24] text-white overflow-visible ${isCollapsed ? "w-8" : "w-64"
         }`}
     >
       {!isCollapsed && (

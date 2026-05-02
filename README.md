@@ -1,73 +1,51 @@
-# React + TypeScript + Vite
+# FlowBoard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+FlowBoard is a high-performance, keyboard-accessible task tracking. It is built to be fast, responsive, and completely manageable via keyboard, even with thousands of tasks loaded.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Multi-Board Management**: Create and manage multiple boards with unique titles and backgrounds.
+- **Dynamic Kanban Columns**: Add, remove, and color-code columns to fit your workflow.
+- **Task Management**: Seamlessly create, edit, delete, and complete cards.
+- **Card Movement**: Move cards between columns through an accessible dropdown menu.
+- **Real-time Search**: Find tasks instantly with a debounced search bar.
+- **Virtualization**: Powered by `@tanstack/react-virtual` to handle 1,000+ tasks with zero lag.
+- **Keyboard First**: Engineered for accessibility with focus traps, ARIA support, and dedicated keyboard sentinels.
+- **Offline Persistence**: Automatic state saving to `localStorage`—your data stays even after a refresh.
 
-## React Compiler
+## Getting Started
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Prerequisites
 
-## Expanding the ESLint configuration
+- Node.js (v18 or higher)
+- npm or yarn
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Installation
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd flowboard
+   ```
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+3. **Start the development server**
+   ```bash
+   npm run dev
+   ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+4. **Open the app**
+   Navigate to `http://localhost:5173` in your browser.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 🛠️ Tech Stack
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- **React 19**: Core frontend framework.
+- **TypeScript**: Robust type-safe development.
+- **Zustand**: State management with persistence.
+- **Tailwind CSS 4**: Modern, utility-first styling.
+- **React Router 7**: Client-side routing.
+- **TanStack Virtual**: List virtualization for massive performance at scale.

@@ -64,7 +64,7 @@ const Navbar = () => {
   );
 
   return (
-    <nav className="flex justify-between w-full fixed z-10 p-4 flex-row border-b text-white bg-[#1F1F21] border-[#E3E1E3]">
+    <nav className="flex justify-between w-full fixed z-30 p-4 flex-row border-b text-white bg-[#1F1F21] border-[#E3E1E3]">
       <div className="flex items-center">
         <div className="flex items-center gap-2 font-extrabold justify-start">
           <FaTrello size={24} />
