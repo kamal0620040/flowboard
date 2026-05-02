@@ -5,6 +5,8 @@ import AddItemForm from "./AddItemForm"
 import BoardListItem from "./BoardListItem"
 import Popover from "./Popover"
 import BoardHeader from "./BoardHeader"
+import Column from "./Column"
+import Card from "./Card"
 
 export {
   Navbar,
@@ -13,5 +15,7 @@ export {
   AddItemForm,
   BoardListItem,
   BoardHeader,
+  Column,
+  Card,
   Popover
 }
