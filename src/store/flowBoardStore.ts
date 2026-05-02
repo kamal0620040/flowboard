@@ -1,16 +1,8 @@
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
-
-// --- Types & Interfaces ---
-
-export interface SubTask {
-  id: string;
-  cardId: string;
-  title: string;
-  description?: string;
-  isCompleted: boolean;
-  order: number;
-}
+import { create } from "zustand";
+import { createJSONStorage, persist } from "zustand/middleware";
+import { COLOR_PALETTE } from "../constants/styles";
+import { generateId } from "../utils/id";
+import { initialStateData } from "../data/initialState";
 
 export interface Card {
   id: string;
@@ -18,6 +10,7 @@ export interface Card {
   boardId: string;
   title: string;
   order: number;
+  isCompleted: boolean;
 }
 
 export interface Column {
@@ -35,188 +28,281 @@ export interface Board {
   backgroundColor: string;
 }
 
-interface TrelloStore {
-  // State
+interface FlowBoardStore {
   boards: Board[];
   columns: Column[];
   cards: Card[];
-  subTasks: SubTask[];
+  cardsById: Record<string, Card>;
   activeBoardId: string | null;
   searchQuery: string;
+  pendingFocusCardId: string | null;
 
-  // Global Actions
-  setActiveBoard: (id: string) => void;
-  deleteBoard: (id: string) => void;
+  setActiveBoard: (boardId: string) => void;
+  deleteBoard: (boardId: string) => void;
   addBoard: (title: string) => string;
-  updateBoardTitle: (id: string, title: string) => void;
-  updateBoardColor: (id: string, color: string) => void;
+  addColumn: (boardId: string, title: string) => string;
+  addCard: (columnId: string, title: string) => string;
+  updateColumnColor: (columnId: string, color: string) => void;
+  updateCardTitle: (cardId: string, title: string) => void;
+  moveCardToColumn: (cardId: string, columnId: string) => void;
+  toggleCardComplete: (cardId: string) => void;
+  setPendingFocusCardId: (cardId: string | null) => void;
+  deleteCard: (cardId: string) => void;
+  seedBoard: (boardId: string, count: number) => void;
+  updateBoardTitle: (boardId: string, title: string) => void;
+  updateBoardColor: (boardId: string, color: string) => void;
   setSearchQuery: (query: string) => void;
 }
 
+const DEFAULT_COLUMN_COLOR = "#101204";
 
-const initialData = {
-  activeBoardId: "board-1",
-  searchQuery: "",
-  boards: [
-    { 
-      id: "board-1", 
-      title: "Product Roadmap", 
-      backgroundColor: "#0747a6" 
-    },
-    { 
-      id: "board-2", 
-      title: "Personal Tasks", 
-      backgroundColor: "#E3E1E3" 
-    }
-  ],
-  columns: [
-    { 
-      id: "col-1", 
-      boardId: "board-1", 
-      title: "To Do", 
-      order: 0, 
-      backgroundColor: "#ebecf0", 
-      isCollapsed: false 
-    },
-    { 
-      id: "col-2", 
-      boardId: "board-1", 
-      title: "In Progress", 
-      order: 1, 
-      backgroundColor: "#ebecf0", 
-      isCollapsed: false 
-    },
-    { 
-      id: "col-3", 
-      boardId: "board-1", 
-      title: "Done", 
-      order: 2, 
-      backgroundColor: "#ebecf0", 
-      isCollapsed: true // Testing image_82aa1f.png
-    }
-  ],
-  cards: [
-    { 
-      id: "card-1", 
-      columnId: "col-1", 
-      boardId: "board-1", 
-      title: "Setup Project Structure", 
-      order: 0 
-    },
-    { 
-      id: "card-2", 
-      columnId: "col-1", 
-      boardId: "board-1", 
-      title: "Implement Zustand Store", 
-      order: 1 
-    },
-    { 
-      id: "card-3", 
-      columnId: "col-2", 
-      boardId: "board-1", 
-      title: "Draft Design Doc", 
-      order: 0 
-    }
-  ],
-  subTasks: [
-    { 
-      id: "sub-1", 
-      cardId: "card-1", 
-      title: "Install Vite", 
-      description: "Initialize the project using the React-TS template.",
-      isCompleted: true, 
-      order: 0 
-    },
-    { 
-      id: "sub-2", 
-      cardId: "card-1", 
-      title: "Configure Tailwind", 
-      description: "Set up tailwind.config.js and base CSS.",
-      isCompleted: false, 
-      order: 1 
-    },
-    { 
-      id: "sub-3", 
-      cardId: "card-2", 
-      title: "Define Schema", 
-      description: "Ensure the 4-tier normalization is correct.",
-      isCompleted: false, 
-      order: 0 
-    }
-  ]
-};
+initialStateData.cardsById = Object.fromEntries(
+  initialStateData.cards.map((c) => [c.id, c])
+);
 
-
-export const useTrelloStore = create<TrelloStore>()(
+export const useFlowBoardStore = create<FlowBoardStore>()(
   persist(
-    (set) => ({
-      // Initial State
-    //   boards: [],
-    //   columns: [],
-    //   cards: [],
-    //   subTasks: [],
-    //   activeBoardId: null,
-    //   searchQuery: '',
+    (set, get) => ({
+      boards: initialStateData.boards,
+      columns: initialStateData.columns,
+      cards: initialStateData.cards,
+      cardsById: initialStateData.cardsById,
+      activeBoardId: initialStateData.activeBoardId,
+      searchQuery: initialStateData.searchQuery,
+      pendingFocusCardId: null,
 
-      ...initialData, 
+      setActiveBoard: (boardId) => set({ activeBoardId: boardId }),
 
-      // Global Actions
-      setActiveBoard: (id) => set({ activeBoardId: id }),
-      updateBoardTitle: (id: string, title: string) => {
+      updateBoardTitle: (boardId, title) => {
         set((state) => ({
           boards: state.boards.map((board) =>
-            board.id === id ? { ...board, title } : board
+            board.id === boardId ? { ...board, title } : board
           ),
         }));
       },
-      addBoard: (title: string) => {
-        const id = `board-${Date.now()}`;
-        const colors = ["#0747a6", "#519839", "#7c3aed", "#0ea5e9", "#db2777"];
-        const backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-        const newBoard = { id, title, backgroundColor };
+
+      addBoard: (title) => {
+        const boardId = generateId("board");
+        const boardColors = COLOR_PALETTE.solidColors;
+        const backgroundColor =
+          boardColors[Math.floor(Math.random() * boardColors.length)];
 
         set((state) => ({
-          boards: [...state.boards, newBoard],
-          activeBoardId: id,
+          boards: [...state.boards, { id: boardId, title, backgroundColor }],
+          activeBoardId: boardId,
         }));
 
-        return id;
+        return boardId;
       },
-      deleteBoard: (id: string) => {
+
+      addColumn: (boardId, title) => {
+        const columnId = generateId("column");
+
+        set((state) => ({
+          columns: [
+            ...state.columns,
+            {
+              id: columnId,
+              boardId,
+              title,
+              order: Date.now(),
+              backgroundColor: DEFAULT_COLUMN_COLOR,
+              isCollapsed: false,
+            },
+          ],
+        }));
+
+        return columnId;
+      },
+
+      addCard: (columnId, title) => {
+        const column = get().columns.find((columnItem) => columnItem.id === columnId);
+        if (!column) return generateId("card");
+        const cardId = generateId("card");
+
+        const newCard: Card = {
+          id: cardId,
+          columnId,
+          boardId: column.boardId,
+          title,
+          order: Date.now(),
+          isCompleted: false,
+        };
+
+        set((state) => ({
+          cards: [...state.cards, newCard],
+          cardsById: { ...state.cardsById, [cardId]: newCard },
+        }));
+
+        return cardId;
+      },
+
+      updateColumnColor: (columnId, color) => {
+        set((state) => ({
+          columns: state.columns.map((column) =>
+            column.id === columnId ? { ...column, backgroundColor: color } : column
+          ),
+        }));
+      },
+
+      updateCardTitle: (cardId, title) => {
+        set((state) => ({
+          cards: state.cards.map((card) =>
+            card.id === cardId ? { ...card, title } : card
+          ),
+          cardsById: state.cardsById[cardId]
+            ? {
+              ...state.cardsById,
+              [cardId]: { ...state.cardsById[cardId], title },
+            }
+            : state.cardsById,
+        }));
+      },
+
+      moveCardToColumn: (cardId, columnId) => {
+        const targetColumn = get().columns.find((column) => column.id === columnId);
+        if (!targetColumn) return;
+
         set((state) => {
-          const remainingBoards = state.boards.filter((b) => b.id !== id);
-          const removedCardIds = state.cards.filter((c) => c.boardId === id).map((c) => c.id);
-          const remainingColumns = state.columns.filter((c) => c.boardId !== id);
-          const remainingCards = state.cards.filter((c) => c.boardId !== id);
-          const remainingSubTasks = state.subTasks.filter((s) => !removedCardIds.includes(s.cardId));
+          const nextCards = state.cards.map((card) => {
+            if (card.id !== cardId) return card;
+
+            return {
+              ...card,
+              columnId,
+              boardId: targetColumn.boardId,
+              order: Date.now(),
+            };
+          });
+
+          const nextCardsById = state.cardsById[cardId]
+            ? {
+              ...state.cardsById,
+              [cardId]: {
+                ...state.cardsById[cardId],
+                columnId,
+                boardId: targetColumn.boardId,
+                order: Date.now(),
+              },
+            }
+            : state.cardsById;
+
+          return {
+            pendingFocusCardId: cardId,
+            cards: nextCards,
+            cardsById: nextCardsById,
+          };
+        });
+      },
+
+      toggleCardComplete: (cardId) => {
+        set((state) => ({
+          cards: state.cards.map((card) =>
+            card.id === cardId ? { ...card, isCompleted: !card.isCompleted } : card
+          ),
+          cardsById: state.cardsById[cardId]
+            ? {
+              ...state.cardsById,
+              [cardId]: {
+                ...state.cardsById[cardId],
+                isCompleted: !state.cardsById[cardId].isCompleted,
+              },
+            }
+            : state.cardsById,
+        }));
+      },
+
+      setPendingFocusCardId: (cardId) => set({ pendingFocusCardId: cardId }),
+
+      deleteCard: (cardId) => {
+        set((state) => {
+          const nextCards = state.cards.filter((card) => card.id !== cardId);
+          const nextCardsById = { ...state.cardsById };
+
+          delete nextCardsById[cardId];
+
+          return {
+            cards: nextCards,
+            cardsById: nextCardsById,
+          };
+        });
+      },
+
+      seedBoard: (boardId, count) => {
+        const boardColumns = get().columns.filter((column) => column.boardId === boardId);
+        const boardColumnIds = boardColumns.map((column) => column.id);
+
+        // If the board has no columns yet, create one so seed cards have a home.
+        if (boardColumnIds.length === 0) {
+          const fallbackColumnId = get().addColumn(boardId, "Backlog");
+          boardColumnIds.push(fallbackColumnId);
+        }
+
+        const cardsToAdd: Card[] = [];
+        const cardsByIdUpdates: Record<string, Card> = {};
+        const timestampBase = Date.now();
+
+        for (let index = 0; index < count; index++) {
+          const cardId = generateId("seed");
+          const columnId = boardColumnIds[index % boardColumnIds.length];
+
+          const card: Card = {
+            id: cardId,
+            columnId,
+            boardId,
+            title: `Seeded card ${index + 1}`,
+            order: timestampBase + index,
+            isCompleted: false,
+          };
+
+          cardsToAdd.push(card);
+          cardsByIdUpdates[cardId] = card;
+        }
+
+        set((state) => ({
+          cards: [...state.cards, ...cardsToAdd],
+          cardsById: { ...state.cardsById, ...cardsByIdUpdates },
+        }));
+      },
+
+      deleteBoard: (boardId) => {
+        set((state) => {
+          const remainingBoards = state.boards.filter((board) => board.id !== boardId);
+          const remainingColumns = state.columns.filter((column) => column.boardId !== boardId);
+          const remainingCards = state.cards.filter((card) => card.boardId !== boardId);
+          const remainingCardsById = Object.fromEntries(
+            Object.entries(state.cardsById).filter(([, card]) => card.boardId !== boardId)
+          ) as Record<string, Card>;
 
           return {
             boards: remainingBoards,
             columns: remainingColumns,
             cards: remainingCards,
-            subTasks: remainingSubTasks,
+            cardsById: remainingCardsById,
             activeBoardId: remainingBoards[0]?.id ?? null,
           };
         });
       },
-      setSearchQuery: (searchQuery) => set({ searchQuery }),
-      updateBoardColor: (id: string, color: string) => {
+
+      setSearchQuery: (query) => set({ searchQuery: query }),
+
+      updateBoardColor: (boardId, color) => {
         set((state) => ({
-          boards: state.boards.map((b) => 
-            b.id === id ? { ...b, backgroundColor: color } : b
+          boards: state.boards.map((board) =>
+            board.id === boardId ? { ...board, backgroundColor: color } : board
           ),
         }));
       },
     }),
     {
-      name: 'trello-state-v1',
+      name: "flow-board-state-v1",
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         boards: state.boards,
         columns: state.columns,
         cards: state.cards,
-        subTasks: state.subTasks,
-        activeBoardId: state.activeBoardId
+        cardsById: state.cardsById,
+        activeBoardId: state.activeBoardId,
       }),
     }
   )

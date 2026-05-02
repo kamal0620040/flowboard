@@ -43,7 +43,7 @@ const Column = ({ id }: ColumnProps) => {
   const virtualizer = useVirtualizer({
     count: orderedCards.length,
     getScrollElement: () => cardsScrollRef.current,
-    estimateSize: () => 92,
+    estimateSize: () => 52,
     overscan: 8,
     getItemKey: (index) => orderedCards[index].id,
   });

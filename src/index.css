@@ -5,27 +5,38 @@
   --font-sans: 'Inter', sans-serif;
 }
 
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  overflow: clip;
+  margin: 0;
+  padding: 0;
+  background-color: #121212;
+}
+
 /* Sidebar scrollbar styling */
 .sidebar-scroll {
 	scrollbar-width: thin;
-	scrollbar-color: rgba(148,163,184,0.4) transparent;
+	/* light thumb on dark track for better contrast on dark panels/columns */
+	scrollbar-color: rgba(255,255,255,0.45) rgba(0,0,0,0.2);
 }
 
 .sidebar-scroll::-webkit-scrollbar {
-	width: 10px;
+	width: 12px;
+	height: 12px;
 }
 
 .sidebar-scroll::-webkit-scrollbar-track {
-	background: transparent;
+	background: rgba(0,0,0,0.2);
 }
 
 .sidebar-scroll::-webkit-scrollbar-thumb {
-	background: rgba(148,163,184,0.22);
+	background: rgba(255,255,255,0.45);
 	border-radius: 9999px;
-	border: 2px solid transparent;
+	border: 2px solid rgba(0,0,0,0.2);
 	background-clip: padding-box;
 }
 
 .sidebar-scroll::-webkit-scrollbar-thumb:hover {
-	background: rgba(148,163,184,0.36);
+	background: rgba(255,255,255,0.65);
 }

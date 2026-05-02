@@ -1,6 +1,7 @@
 import { useFlowBoardStore } from "../store/flowBoardStore";
 import { getDarkenedBoardBackground } from "../utils/boardBackground";
 import EditableBoardTitle from "./EditableBoardTitle";
+import Button from "./Button";
 
 interface BoardHeaderProps {
   boardId: string;
@@ -23,18 +24,16 @@ const BoardHeader = ({ boardId, title, background }: BoardHeaderProps) => {
         />
 
         <div className="ml-4 flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => {
+          <Button
+            variant="secondary"
+            handleClick={() => {
               if (!boardId) return;
-              // confirm to avoid accidental huge seed
               if (!window.confirm("Seed 1000 cards for this board?")) return;
               seedBoard(boardId, 1000);
             }}
-            className="rounded bg-white/10 px-3 py-1 text-sm text-white hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-sky-500"
           >
             Seed 1000
-          </button>
+          </Button>
         </div>
       </div>
     </section>
